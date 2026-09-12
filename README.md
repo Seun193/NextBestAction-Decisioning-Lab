@@ -11,25 +11,17 @@ engineering decisions, and selected technical findings.
 
 ### Next Best Action Decisioning
 
-**Data-Layer Migration & End-to-End Validation**
+**Architecture**
+- [Next Best Action Decisioning — Architecture](architecture/next-best-action-decisioning.md)
 
-A synthetic banking-style decisioning system used to investigate
-customer-data integrity, eligibility, action ranking, explainability,
-API behaviour, and regression risk.
+**Case Study**
+- [Validating a Data-Layer Migration in a Next Best Action Decisioning System](case-studies/nba-data-layer-migration-validation.md)
 
-Key areas demonstrated:
+Focus areas: data integrity, eligibility, ranking, explainability, API validation, and regression safety.
 
-- SQL and SQLite data validation
-- Python data-access layers
-- FastAPI service validation
-- Decision eligibility and ranking
-- Reason-code verification
-- Database-to-API reconciliation
-- Positive and negative testing
-- Regression testing with pytest
-- Git-based change isolation
+A synthetic banking-style decisioning system used to investigate customer-data integrity, eligibility, action ranking, explainability, API behaviour, and regression risk.
 
-All customer and financial data referenced in these case studies is synthetic.
+Technical areas demonstrated: SQL/SQLite validation, Python data-access layers, FastAPI testing, decision eligibility and ranking, reason-code verification, database-to-API reconciliation, and positive/negative testing.
 
 ## Other Research Areas
 
