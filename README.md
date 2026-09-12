@@ -1,30 +1,56 @@
-# Engineering Case Studies
+# Next Best Action Decisioning Lab
 
-Selected engineering work focused on decision systems, test automation,
-data validation, API testing, and quantitative analysis.
+A synthetic banking-style decisioning system for exploring and validating customer-data integrity, eligibility rules, action scoring and ranking, explainability, API behaviour, and regression safety.
 
-The underlying implementations are maintained privately.
-This repository presents sanitized architecture, validation strategies,
-engineering decisions, and selected technical findings.
+## Focus
 
-## Case Studies
+Banking decisioning, data validation, API testing, SQL reconciliation, and test automation.
 
-### Next Best Action Decisioning
+## Technologies
 
-**Architecture**
+Python, FastAPI, SQLite, SQL, pytest, Pydantic, Git.
+
+## Key Engineering Work
+
+- Rule-based eligibility, scoring, and action ranking
+- Five candidate Next Best Actions
+- Reason-code generation for decision explainability
+- 20,000 synthetic customer profiles
+- SQLite-backed customer repository
+- Database-to-API reconciliation
+- Positive and negative API validation
+- Automated regression testing
+- Controlled data-layer migration from CSV to SQLite
+- Git-based baseline and feature-branch workflow
+
+## Architecture
+
 - [Next Best Action Decisioning — Architecture](architecture/next-best-action-decisioning.md)
 
-**Case Study**
+## Case Study
+
 - [Validating a Data-Layer Migration in a Next Best Action Decisioning System](case-studies/nba-data-layer-migration-validation.md)
 
-Focus areas: data integrity, eligibility, ranking, explainability, API validation, and regression safety.
+## Validation Focus
 
-A synthetic banking-style decisioning system used to investigate customer-data integrity, eligibility, action ranking, explainability, API behaviour, and regression risk.
+The lab is designed around three main validation concerns:
 
-Technical areas demonstrated: SQL/SQLite validation, Python data-access layers, FastAPI testing, decision eligibility and ranking, reason-code verification, database-to-API reconciliation, and positive/negative testing.
+### Data Integrity
 
-## Other Research Areas
+Is the correct customer record being consumed by the decisioning system?
 
-- Finnish and Nordic electricity-market analysis
-- Econometric modelling and robustness testing
-- Stochastic forecasting and decision-system evaluation
+### Decision Integrity
+
+Are eligibility, score, ranking, winning action, and reason codes consistent with the customer input?
+
+### Regression Safety
+
+Can infrastructure or data-layer changes occur without changing established decision behaviour?
+
+## Repository
+
+- [NextBestAction-Decisioning-Lab](https://github.com/Seun193/NextBestAction-Decisioning-Lab)
+
+## Related Research
+
+- [FinlandPowerMarketLab-Showcase](https://github.com/Seun193/FinlandPowerMarketLab-Showcase)
