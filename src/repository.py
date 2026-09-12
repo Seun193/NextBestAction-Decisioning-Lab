@@ -1,28 +1,54 @@
-from functools import lru_cache
 from pathlib import Path
-import pandas as pd
+import sqlite3
 
 from .models import Customer
 
 
-DATA_FILE = Path(__file__).resolve().parents[1] / "data" / "customers.csv"
+DB_FILE = Path(__file__).resolve().parents[1] / "data" / "nba_lab.db"
 
 
-@lru_cache(maxsize=1)
-def load_customers() -> pd.DataFrame:
-    if not DATA_FILE.exists():
+def get_connection() -> sqlite3.Connection:
+    """
+    Open a connection to the NBA Decisioning Lab SQLite database.
+    """
+    if not DB_FILE.exists():
         raise FileNotFoundError(
-            f"{DATA_FILE} not found. Run: python -m src.synthetic_data"
+            f"{DB_FILE} not found. "
+            "Run: python -m src.load_customers_to_sqlite"
         )
-    return pd.read_csv(DATA_FILE)
+
+    connection = sqlite3.connect(DB_FILE)
+    connection.row_factory = sqlite3.Row
+    return connection
 
 
 def get_customer(customer_id: str) -> Customer | None:
-    df = load_customers()
-    rows = df.loc[df["customer_id"] == customer_id]
+    """
+    Retrieve one customer from SQLite by customer_id.
+    """
+    sql = """
+        SELECT
+            customer_id,
+            age,
+            monthly_income,
+            savings_balance,
+            monthly_surplus,
+            has_mortgage,
+            has_credit_card,
+            investment_customer,
+            app_visits_30d,
+            marketing_consent,
+            investment_consent,
+            credit_score_band,
+            preferred_channel
+        FROM customers
+        WHERE customer_id = ?
+    """
 
-    if rows.empty:
+    with get_connection() as connection:
+        row = connection.execute(sql, (customer_id,)).fetchone()
+
+    if row is None:
         return None
 
-    row = rows.iloc[0].to_dict()
-    return Customer(**row)
+    return Customer(**dict(row))
