@@ -54,3 +54,14 @@ FastAPI endpoint
         |
         v
 Automated validation
+```
+
+## Validation Documentation
+
+The project includes documented validation evidence covering the major QA layers of the NBA decisioning system:
+
+- [SQLite Data Layer Validation](docs/validation/SQLite_Data_Layer_Validation.md)
+- [Independent Business-Rule Validation](docs/validation/Business_Rule_Validation.md)
+- [Data Quality and Pipeline Validation](docs/validation/Data_Quality_and_Pipeline_Validation.md)
+- [API Contract and Negative Testing](docs/validation/API_Contract_and_Negative_Testing.md)
+- [Batch Reconciliation Validation](docs/validation/Batch_Reconciliation_Validation.md)
