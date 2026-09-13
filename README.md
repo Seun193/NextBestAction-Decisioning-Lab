@@ -65,3 +65,5 @@ The project includes documented validation evidence covering the major QA layers
 - [Data Quality and Pipeline Validation](docs/validation/Data_Quality_and_Pipeline_Validation.md)
 - [API Contract and Negative Testing](docs/validation/API_Contract_and_Negative_Testing.md)
 - [Batch Reconciliation Validation](docs/validation/Batch_Reconciliation_Validation.md)
+- [CI Regression Workflow Validation](docs/validation/CI_Regression_Workflow_Validation.md)
+
