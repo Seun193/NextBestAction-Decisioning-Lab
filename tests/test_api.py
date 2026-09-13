@@ -11,5 +11,5 @@ def test_health():
 
 
 def test_unknown_customer_returns_404():
-    response = client.get("/nba/DOES_NOT_EXIST")
+    response = client.get("/nba/C99999")
     assert response.status_code == 404
