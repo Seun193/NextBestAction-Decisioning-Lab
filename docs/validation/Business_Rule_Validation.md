@@ -1,14 +1,14 @@
-# Day 2 — Independent NBA Business-Rule Validation
+# Independent NBA Business-Rule Validation
 
 ## Objective
 
 Validate the Next Best Action decision engine against independently documented business requirements.
 
-The purpose was to avoid using the production decision logic itself as the only source of expected results.
+The purpose is to avoid using the production decision logic itself as the only source of expected results.
 
-Day 1 established integration consistency.
+The database-to-API validation established integration consistency.
 
-Day 2 established requirement compliance.
+This validation establishes requirement compliance.
 
 ---
 
@@ -31,9 +31,9 @@ The existing test suite already contained some eligibility checks, but the busin
 
 ## Independent Test Oracle
 
-An important QA concept introduced on Day 2 was the independent test oracle.
+An important QA concept used in this validation is the independent test oracle.
 
-Day 1 reconciliation effectively tested:
+The database-to-API reconciliation effectively tested:
 
 ```text
 Database

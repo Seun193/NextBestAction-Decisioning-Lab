@@ -2,7 +2,7 @@
 
 A synthetic banking-style Next Best Action (NBA) decisioning system for exploring and validating customer-data integrity, eligibility rules, action scoring and ranking, explainability, API behaviour, and regression safety.
 
-This project is intentionally built as a hands-on engineering and QA training lab. It combines decisioning logic, database validation, API testing, automated regression testing, and end-to-end reconciliation.
+This project is a hands-on engineering and QA validation lab combining decisioning logic, database validation, API testing, automated regression testing, and end-to-end reconciliation.
 
 ## Focus
 

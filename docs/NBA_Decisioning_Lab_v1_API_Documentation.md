@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-The NBA Decisioning Lab v1 API is a local training API for a synthetic Next-Best-Action (NBA) banking decision system.
+The NBA Decisioning Lab v1 API is a local demonstration API for a synthetic Next-Best-Action (NBA) banking decision system.
 
 It is **not a Nordea API**, does not connect to real bank systems, and uses only synthetic customer data.
 
@@ -337,8 +337,7 @@ Useful tests include:
 
 ## 14. Current Limitations
 
-v1 is a learning system and is intentionally simple.
-
+v1 is a demonstration system and is intentionally scoped.
 It currently has:
 
 - no real bank data
@@ -353,7 +352,7 @@ It currently has:
 - no Pega integration
 - no GCP deployment
 
-These are not defects in the training project; they define the scope of v1.
+This project uses synthetic data and is intended for demonstration and portfolio purposes only.
 
 ## 15. Planned v2 - Machine Learning
 
@@ -409,6 +408,6 @@ A concise way to describe the project:
 
 ## 17. Safety and Scope
 
-This project is for training and portfolio use only.
+This project uses synthetic data and is intended for demonstration and portfolio purposes only.
 
 Do not use it to make real financial decisions. The customer records are synthetic and the scoring rules are educational examples, not financial advice or production banking logic.

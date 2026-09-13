@@ -1,4 +1,4 @@
-# Day 3 — Data Quality and Pipeline Validation
+# Data Quality and Pipeline Validation
 
 ## Objective
 
@@ -10,7 +10,7 @@ The goal was to detect malformed, incomplete, duplicate, or invalid customer rec
 
 ## Pipeline Position
 
-Day 3 introduced a data-quality gate before decisioning:
+Introduced a data-quality gate before decisioning:
 
 ```text
 Raw customer data

@@ -1,4 +1,4 @@
-\# Day 1 — SQLite Data Layer Validation
+\# SQLite Data Layer Validation
 
 
 
