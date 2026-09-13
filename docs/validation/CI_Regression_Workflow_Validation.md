@@ -197,3 +197,46 @@ Verified evidence:
 - temporary failure probe was not retained in the project
 
 Cloud CI execution will be validated after the workflow is pushed to the repository.
+---
+
+## Cloud CI Verification
+
+The workflow was pushed to GitHub and executed automatically on a fresh GitHub-hosted runner.
+
+The `Full Regression Suite` job completed successfully.
+
+Verified workflow stages included:
+
+- repository checkout
+- Python 3.13 setup
+- dependency installation
+- synthetic customer-data generation
+- SQLite database construction
+- CI report-directory creation
+- complete regression-suite execution
+- JUnit regression-report upload
+
+All workflow stages completed successfully.
+
+The cloud job completed in approximately 23 seconds.
+
+This confirms that the regression workflow is reproducible outside the developer's local `banking` environment.
+
+---
+
+## Final Validation Result
+
+CI regression workflow validation completed successfully.
+
+Verified evidence:
+
+- local regression suite passes with 56 tests
+- JUnit XML report is generated
+- healthy local regression returns exit code `0`
+- intentional regression failure returns exit code `1`
+- restored local regression returns exit code `0`
+- GitHub Actions reconstructs the test environment from repository-controlled sources
+- synthetic customer data is generated successfully in CI
+- SQLite is rebuilt successfully in CI
+- the complete regression suite passes on a fresh GitHub-hosted runner
+- the JUnit regression artifact is uploaded successfully
