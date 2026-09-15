@@ -1,4 +1,6 @@
+import argparse
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -6,34 +8,60 @@ import pandas as pd
 SEED = 42
 N_CUSTOMERS = 20_000
 
-OUT = Path(__file__).resolve().parents[1] / "data" / "customers.csv"
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "data" / "customers.csv"
 
 
-def generate_customers(n: int = N_CUSTOMERS, seed: int = SEED) -> pd.DataFrame:
+def generate_customers(
+    n: int = N_CUSTOMERS,
+    seed: int = SEED,
+) -> pd.DataFrame:
+    if n < 1:
+        raise ValueError("Customer count must be at least 1.")
+
     rng = np.random.default_rng(seed)
 
     age = rng.integers(18, 76, size=n)
-    monthly_income = np.clip(rng.normal(3800, 1500, size=n), 900, 14000)
+    monthly_income = np.clip(
+        rng.normal(3800, 1500, size=n),
+        900,
+        14000,
+    )
+
     savings_balance = np.clip(
         rng.lognormal(mean=8.4, sigma=1.1, size=n) - 3500,
         0,
         250000,
     )
+
     monthly_surplus = np.clip(
         monthly_income * rng.normal(0.16, 0.14, size=n),
         -1500,
         5000,
     )
 
-    has_mortgage = rng.random(n) < np.clip((age - 24) / 65, 0.05, 0.65)
+    has_mortgage = rng.random(n) < np.clip(
+        (age - 24) / 65,
+        0.05,
+        0.65,
+    )
+
     has_credit_card = rng.random(n) < 0.72
+
     investment_customer = rng.random(n) < np.clip(
-        0.10 + (monthly_income - 2000) / 20000 + savings_balance / 500000,
+        0.10
+        + (monthly_income - 2000) / 20000
+        + savings_balance / 500000,
         0.08,
         0.65,
     )
 
-    app_visits_30d = np.clip(rng.poisson(8, size=n), 0, 50)
+    app_visits_30d = np.clip(
+        rng.poisson(8, size=n),
+        0,
+        50,
+    )
+
     marketing_consent = rng.random(n) < 0.84
     investment_consent = rng.random(n) < 0.68
 
@@ -70,12 +98,67 @@ def generate_customers(n: int = N_CUSTOMERS, seed: int = SEED) -> pd.DataFrame:
     return df
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Generate synthetic NBA customer data."
+    )
+
+    parser.add_argument(
+        "--customers",
+        type=int,
+        default=N_CUSTOMERS,
+        help=f"Number of customers to generate. Default: {N_CUSTOMERS:,}",
+    )
+
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=SEED,
+        help=f"Random seed. Default: {SEED}",
+    )
+
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=OUT,
+        help=f"Output CSV path. Default: {OUT}",
+    )
+
+    return parser.parse_args()
+
+
 def main() -> None:
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    df = generate_customers()
-    df.to_csv(OUT, index=False)
-    print(f"Created {len(df):,} synthetic customers")
-    print(f"Saved to: {OUT}")
+    args = parse_args()
+
+    output_path = args.output
+    if not output_path.is_absolute():
+        output_path = ROOT / output_path
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    df = generate_customers(
+        n=args.customers,
+        seed=args.seed,
+    )
+
+    df.to_csv(output_path, index=False)
+
+    print("=" * 70)
+    print("NBA DECISIONING LAB - SYNTHETIC DATA GENERATOR")
+    print("=" * 70)
+    print(f"Customers : {len(df):,}")
+    print(f"Seed      : {args.seed}")
+    print(f"Saved to  : {output_path}")
+
+    if len(df) > 99_999:
+        print()
+        print(
+            "NOTE: Customer IDs above C99999 are intended for "
+            "data-layer volume testing."
+        )
+        print(
+            "They exceed the current API customer-ID contract C#####."
+        )
 
 
 if __name__ == "__main__":

@@ -8,3 +8,4 @@ data/*.db
 data/*.sqlite
 data/*.sqlite3
 reports/
+data/scale/
