@@ -69,4 +69,5 @@ The project includes documented validation evidence covering the major QA layers
 - [Data-Flow Integration Validation](docs/validation/Data_Flow_Integration_Validation.md)
 - [Decision Arbitration Validation](docs/validation/Decision_Arbitration_Validation.md)
 - [Propensity Model Validation](docs/validation/Propensity_Model_Validation.md)
+- [Release Readiness Validation](docs/validation/Release_Readiness_Validation.md)
 
