@@ -1,73 +1,36 @@
 # Next Best Action Decisioning Lab
 
-A synthetic banking-style Next Best Action (NBA) decisioning system for exploring and validating customer-data integrity, eligibility rules, action scoring and ranking, explainability, API behaviour, and regression safety.
+A banking-style decisioning and QA engineering lab for validating customer data, business rules, APIs, decision logic, model outputs, system integrations, and release readiness.
 
-This project is a hands-on engineering and QA validation lab combining decisioning logic, database validation, API testing, automated regression testing, and end-to-end reconciliation.
+The project demonstrates an automated quality-engineering approach to a synthetic Next Best Action platform, covering the path from customer data ingestion through decisioning and downstream delivery.
 
-## Focus
+## Engineering Scope
 
-Banking decisioning, data validation, API testing, SQL reconciliation, and test automation.
-
-## Technologies
-
-Python, FastAPI, SQLite, SQL, pytest, Pydantic, Git.
-
-## Key Engineering Work
-
-- Rule-based eligibility, scoring, and action ranking
-- Five candidate Next Best Actions
-- Reason-code generation for decision explainability
 - 20,000 synthetic customer profiles
 - SQLite-backed customer repository
-- Database-to-API reconciliation
-- Positive and negative API validation
-- Automated regression testing
-- Controlled data-layer migration from CSV to SQLite
-- Git-based baseline and feature-branch workflow
+- FastAPI decisioning API
+- independent business-rule validation
+- API contract and negative testing
+- data-quality validation
+- database-to-API reconciliation
+- full-population batch reconciliation
+- upstream and downstream mapping validation
+- eligibility and constraint enforcement
+- Pega-inspired candidate arbitration
+- synthetic propensity-model validation
+- GitHub Actions regression workflow
+- automated fail-closed release validation
+- JUnit evidence generation
 
-## Architecture
+## Current Validation Baseline
 
-- [Next Best Action Decisioning — Architecture](architecture/next-best-action-decisioning.md)
+**101 automated tests passing**
 
-High-level flow:
+Release validation includes:
 
-```text
-Synthetic customer data
-        |
-        v
-SQLite customer repository
-        |
-        v
-Eligibility checks
-        |
-        v
-Rule-based action scoring
-        |
-        v
-Rank candidate actions
-        |
-        v
-Next Best Action
-        |
-        v
-FastAPI endpoint
-        |
-        v
-Automated validation
-```
-
-## Validation Documentation
-
-The project includes documented validation evidence covering the major QA layers of the NBA decisioning system:
-
-- [SQLite Data Layer Validation](docs/validation/SQLite_Data_Layer_Validation.md)
-- [Independent Business-Rule Validation](docs/validation/Business_Rule_Validation.md)
-- [Data Quality and Pipeline Validation](docs/validation/Data_Quality_and_Pipeline_Validation.md)
-- [API Contract and Negative Testing](docs/validation/API_Contract_and_Negative_Testing.md)
-- [Batch Reconciliation Validation](docs/validation/Batch_Reconciliation_Validation.md)
-- [CI Regression Workflow Validation](docs/validation/CI_Regression_Workflow_Validation.md)
-- [Data-Flow Integration Validation](docs/validation/Data_Flow_Integration_Validation.md)
-- [Decision Arbitration Validation](docs/validation/Decision_Arbitration_Validation.md)
-- [Propensity Model Validation](docs/validation/Propensity_Model_Validation.md)
-- [Release Readiness Validation](docs/validation/Release_Readiness_Validation.md)
+- critical release-readiness smoke tests
+- full automated regression
+- machine-readable JUnit evidence
+- non-zero exit code on mandatory validation failure
+- explicit `PASS` or `BLOCKED` release decisions
 
