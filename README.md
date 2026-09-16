@@ -41,6 +41,7 @@ flowchart LR
     J --> K["Release Confidence"]
 
     H --> L["Consumers<br/>UI / API client / tester / reviewer"]
+```
 
 ## Engineering Scope
 
