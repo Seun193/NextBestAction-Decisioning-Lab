@@ -1,11 +1,3 @@
-# Next Best Action Decisioning Lab
-
-A banking-style decisioning and QA engineering lab for validating customer data, business rules, APIs, decision logic, model outputs, system integrations, and release readiness.
-
-The project demonstrates an automated quality-engineering approach to a synthetic Next Best Action platform, covering the path from customer-data ingestion through decisioning and downstream delivery.
-
-> All customer data used in this repository is synthetic.
-
 ## Architecture Overview
 
 The Next Best Action Decisioning Lab is structured as a testable decisioning system.
@@ -16,17 +8,17 @@ The architecture supports rule validation, scoring, ranking, explainability, and
 
 ```mermaid
 flowchart LR
-    A[Customer Data<br/>CSV / Synthetic Dataset] --> B[Data Load Layer<br/>load_customers_to_sqlite.py]
-    B --> C[(SQLite Database)]
+    A["Customer Data<br/>CSV / Synthetic Dataset"] --> B["Data Load Layer<br/>load_customers_to_sqlite.py"]
+    B --> C[("SQLite Database")]
 
-    C --> D[Repository Layer]
-    D --> E[Decision Engine]
+    C --> D["Repository Layer"]
+    D --> E["Decision Engine"]
 
-    subgraph Decision Logic
-        E1[Eligibility Rules]
-        E2[Action Scoring]
-        E3[Ranking & Arbitration]
-        E4[Reason Codes / Explainability]
+    subgraph DL["Decision Logic"]
+        E1["Eligibility Rules"]
+        E2["Action Scoring"]
+        E3["Ranking & Arbitration"]
+        E4["Reason Codes / Explainability"]
     end
 
     E --> E1
@@ -34,21 +26,21 @@ flowchart LR
     E --> E3
     E --> E4
 
-    E1 --> F[FastAPI Service]
+    E1 --> F["FastAPI Service"]
     E2 --> F
     E3 --> F
     E4 --> F
 
-    F --> G[/health/]
-    F --> H[/nba/{customer_id}/]
+    F --> G["GET /health/"]
+    F --> H["GET /nba/{customer_id}/"]
 
-    I[Test Suite<br/>pytest / API tests / negative tests / reconciliation] --> F
+    I["Test Suite<br/>pytest / API tests / negative tests / reconciliation"] --> F
     I --> E
 
-    J[CI / Quality Gate] --> I
-    J --> K[Release Confidence]
+    J["CI / Quality Gate"] --> I
+    J --> K["Release Confidence"]
 
-    H --> L[Consumers<br/>UI / API client / tester / reviewer]
+    H --> L["Consumers<br/>UI / API client / tester / reviewer"]
 
 ## Engineering Scope
 
