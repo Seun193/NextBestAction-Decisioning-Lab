@@ -153,7 +153,50 @@ def get_customer_ids(
             "SELECT customer_id FROM customers"
         )
     }
+DEPENDENT_MEMBERSHIP_TABLES = (
+    "membership_events",
+    "engagement_events",
+    "benefit_redemptions",
+    "campaign_interactions",
+)
 
+
+def ensure_base_reload_is_safe(
+    connection: sqlite3.Connection,
+) -> None:
+    """
+    Prevent a base membership refresh from silently deleting
+    members that already have dependent operational history.
+
+    Once activity/event data exists, the complete membership
+    pipeline must be rebuilt through an explicit orchestration
+    process instead.
+    """
+    populated_tables = []
+
+    for table_name in DEPENDENT_MEMBERSHIP_TABLES:
+        count = connection.execute(
+            f'SELECT COUNT(*) FROM "{table_name}"'
+        ).fetchone()[0]
+
+        if count > 0:
+            populated_tables.append(
+                (table_name, count)
+            )
+
+    if populated_tables:
+        details = ", ".join(
+            f"{table_name}={count}"
+            for table_name, count
+            in populated_tables
+        )
+
+        raise RuntimeError(
+            "Base membership reload blocked because "
+            "dependent membership activity exists: "
+            f"{details}. "
+            "Use the full membership pipeline rebuild."
+        )
 
 def reject(
     rejected_rows: list[dict],
@@ -674,6 +717,10 @@ def main() -> None:
         rejected_rows = (
             rejected_members
             + rejected_subscriptions
+        )
+
+        ensure_base_reload_is_safe(
+            connection
         )
 
         #
