@@ -239,18 +239,47 @@ def determine_end_date(
     return earliest_end + timedelta(days=offset)
 
 
+def parse_boolean_style(
+    value,
+    field_name: str,
+) -> int:
+    normalized = str(
+        value
+    ).strip().lower()
+
+    mappings = {
+        "0": 0,
+        "1": 1,
+        "false": 0,
+        "true": 1,
+    }
+
+    if normalized not in mappings:
+        raise ValueError(
+            f"{field_name} must be "
+            "0/1/true/false"
+        )
+
+    return mappings[
+        normalized
+    ]
+
+
 def membership_consent(
-    customer_consent: int,
+    customer_consent,
     rng: np.random.Generator,
 ) -> int:
     """
-    Preserve the customer-system consent in most cases.
+    Preserve authoritative customer consent in most cases.
 
     A small deterministic proportion is deliberately mismatched
-    so the later data-quality layer has realistic reconciliation
+    so the data-quality layer has realistic reconciliation
     exceptions to detect.
     """
-    consent = int(bool(customer_consent))
+    consent = parse_boolean_style(
+        customer_consent,
+        "customer_marketing_consent",
+    )
 
     if rng.random() < 0.015:
         return 1 - consent
