@@ -200,13 +200,17 @@ def random_join_date(
 ) -> date:
     days_back = int(
         rng.integers(
-            30,
+            0,
             (365 * 5) + 1,
         )
     )
 
-    return as_of_date - timedelta(days=days_back)
-
+    return (
+        as_of_date
+        - timedelta(
+            days=days_back
+        )
+    )
 
 def determine_end_date(
     join_date: date,
@@ -220,23 +224,26 @@ def determine_end_date(
     }:
         return None
 
-    earliest_end = join_date + timedelta(days=30)
-
-    if earliest_end >= as_of_date:
+    if join_date >= as_of_date:
         return as_of_date
 
     available_days = (
-        as_of_date - earliest_end
+        as_of_date - join_date
     ).days
 
     offset = int(
         rng.integers(
-            0,
+            1,
             available_days + 1,
         )
     )
 
-    return earliest_end + timedelta(days=offset)
+    return (
+        join_date
+        + timedelta(
+            days=offset
+        )
+    )
 
 
 def parse_boolean_style(
@@ -488,11 +495,12 @@ def build_subscriptions(
 
         if create_history:
             #
-            # Keep at least 30 days between the plan transition
-            # and the end of the member lifecycle.
+            # Permit plan transitions throughout the membership
+            # lifecycle while keeping the transition before the
+            # lifecycle end.
             #
             max_transition_day = (
-                membership_duration_days - 30
+                 membership_duration_days - 1
             )
 
             transition_days = int(
