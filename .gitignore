@@ -9,3 +9,4 @@ data/*.sqlite
 data/*.sqlite3
 reports/
 data/scale/
+data/membership/

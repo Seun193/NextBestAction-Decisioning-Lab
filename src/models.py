@@ -1,4 +1,5 @@
 from typing import List
+
 from pydantic import BaseModel, Field
 
 
@@ -16,6 +17,20 @@ class Customer(BaseModel):
     investment_consent: bool
     credit_score_band: str
     preferred_channel: str
+
+
+class MembershipContext(BaseModel):
+    member_id: str
+    membership_status: str
+    membership_tier: str
+
+    tenure_days: int = Field(ge=0)
+    engagement_events_30d: int = Field(ge=0)
+    successful_benefit_redemptions_30d: int = Field(ge=0)
+    campaign_sends_30d: int = Field(ge=0)
+    campaign_conversions_30d: int = Field(ge=0)
+
+    latest_campaign_response: str | None = None
 
 
 class ActionScore(BaseModel):
