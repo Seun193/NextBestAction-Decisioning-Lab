@@ -1,7 +1,10 @@
 from fastapi import FastAPI, HTTPException, Path
 
-from .decision_engine import decide
-from .repository import get_customer
+from .membership_decisioning import decide_with_membership
+from .repository import (
+    get_customer,
+    get_membership_context,
+)
 from .models import NBAResponse
 
 
@@ -14,10 +17,16 @@ app = FastAPI(
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "1.0.0"}
+    return {
+        "status": "ok",
+        "version": "1.0.0",
+    }
 
 
-@app.get("/nba/{customer_id}", response_model=NBAResponse)
+@app.get(
+    "/nba/{customer_id}",
+    response_model=NBAResponse,
+)
 def get_nba(
     customer_id: str = Path(
         ...,
@@ -25,7 +34,9 @@ def get_nba(
         description="Synthetic customer ID in the format C#####",
     ),
 ):
-    customer = get_customer(customer_id)
+    customer = get_customer(
+        customer_id
+    )
 
     if customer is None:
         raise HTTPException(
@@ -33,4 +44,11 @@ def get_nba(
             detail="Customer not found",
         )
 
-    return decide(customer)
+    membership = get_membership_context(
+        customer_id
+    )
+
+    return decide_with_membership(
+        customer,
+        membership,
+    )
