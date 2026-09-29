@@ -384,3 +384,36 @@ def test_non_member_has_no_membership_context(
         )
         is None
     )
+
+def test_membership_context_returns_none_when_schema_is_absent(
+    tmp_path,
+    monkeypatch,
+):
+    db_path = tmp_path / "customer_only.db"
+
+    with sqlite3.connect(
+        db_path
+    ) as connection:
+        connection.execute(
+            """
+            CREATE TABLE customers (
+                customer_id TEXT PRIMARY KEY
+            )
+            """
+        )
+
+        connection.commit()
+
+    monkeypatch.setattr(
+        repository,
+        "DB_FILE",
+        db_path,
+    )
+
+    context = (
+        repository.get_membership_context(
+            "C00001"
+        )
+    )
+
+    assert context is None

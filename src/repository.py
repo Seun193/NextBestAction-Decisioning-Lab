@@ -42,6 +42,7 @@ def get_customer(
     """
     Retrieve one customer from SQLite by customer_id.
     """
+
     sql = """
         SELECT
             customer_id,
@@ -82,15 +83,38 @@ def get_membership_context(
     as_of_date: str = MEMBERSHIP_AS_OF_DATE,
 ) -> MembershipContext | None:
     """
-    Build the decisioning membership context for one
-    customer.
+    Build the decisioning membership context for one customer.
 
-    The default reporting date matches the current
-    Membership Data Operations analytics snapshot.
+    If the membership schema is not installed, return None
+    so the original NBA decisioning flow can still operate.
 
     The trailing 30-day window is inclusive:
     as_of_date minus 29 days through as_of_date.
     """
+
+    required_tables = {
+        "members",
+        "engagement_events",
+        "benefit_redemptions",
+        "campaign_interactions",
+    }
+
+    with get_connection() as connection:
+        existing_tables = {
+            row[0]
+            for row in connection.execute(
+                """
+                SELECT name
+                FROM sqlite_master
+                WHERE type = 'table'
+                """
+            ).fetchall()
+        }
+
+    if not required_tables.issubset(
+        existing_tables
+    ):
+        return None
 
     sql = """
         WITH params AS (
@@ -113,10 +137,8 @@ def get_membership_context(
                     JULIANDAY(
                         CASE
                             WHEN m.end_date IS NOT NULL
-                             AND DATE(m.end_date)
-                                 < p.as_of_date
+                             AND DATE(m.end_date) < p.as_of_date
                             THEN DATE(m.end_date)
-
                             ELSE p.as_of_date
                         END
                     )
@@ -130,66 +152,38 @@ def get_membership_context(
 
             (
                 SELECT COUNT(*)
-
                 FROM engagement_events AS e
-
-                WHERE e.member_id
-                      = m.member_id
-
-                  AND DATE(
-                        e.event_timestamp
-                      )
+                WHERE e.member_id = m.member_id
+                  AND DATE(e.event_timestamp)
                       BETWEEN p.window_start
                           AND p.as_of_date
             ) AS engagement_events_30d,
 
             (
                 SELECT COUNT(*)
-
                 FROM benefit_redemptions AS b
-
-                WHERE b.member_id
-                      = m.member_id
-
-                  AND b.redemption_status
-                      = 'REDEEMED'
-
-                  AND DATE(
-                        b.redemption_timestamp
-                      )
+                WHERE b.member_id = m.member_id
+                  AND b.redemption_status = 'REDEEMED'
+                  AND DATE(b.redemption_timestamp)
                       BETWEEN p.window_start
                           AND p.as_of_date
             ) AS successful_benefit_redemptions_30d,
 
             (
                 SELECT COUNT(*)
-
                 FROM campaign_interactions AS c
-
-                WHERE c.member_id
-                      = m.member_id
-
-                  AND DATE(
-                        c.sent_timestamp
-                      )
+                WHERE c.member_id = m.member_id
+                  AND DATE(c.sent_timestamp)
                       BETWEEN p.window_start
                           AND p.as_of_date
             ) AS campaign_sends_30d,
 
             (
                 SELECT COUNT(*)
-
                 FROM campaign_interactions AS c
-
-                WHERE c.member_id
-                      = m.member_id
-
-                  AND c.response_type
-                      = 'CONVERTED'
-
-                  AND DATE(
-                        c.sent_timestamp
-                      )
+                WHERE c.member_id = m.member_id
+                  AND c.response_type = 'CONVERTED'
+                  AND DATE(c.sent_timestamp)
                       BETWEEN p.window_start
                           AND p.as_of_date
             ) AS campaign_conversions_30d,
@@ -197,27 +191,17 @@ def get_membership_context(
             (
                 SELECT
                     c.response_type
-
                 FROM campaign_interactions AS c
-
-                WHERE c.member_id
-                      = m.member_id
-
-                  AND DATETIME(
-                        c.sent_timestamp
-                      )
+                WHERE c.member_id = m.member_id
+                  AND DATETIME(c.sent_timestamp)
                       <= DATETIME(
                             p.as_of_date,
                             '+1 day',
                             '-1 second'
                          )
-
                 ORDER BY
-                    DATETIME(
-                        c.sent_timestamp
-                    ) DESC,
+                    DATETIME(c.sent_timestamp) DESC,
                     c.interaction_id DESC
-
                 LIMIT 1
             ) AS latest_campaign_response
 
@@ -226,11 +210,7 @@ def get_membership_context(
         CROSS JOIN params AS p
 
         WHERE m.customer_id = ?
-
-          AND DATE(
-                m.join_date
-              )
-              <= p.as_of_date
+          AND DATE(m.join_date) <= p.as_of_date
     """
 
     with get_connection() as connection:
