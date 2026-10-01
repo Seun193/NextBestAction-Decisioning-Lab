@@ -168,7 +168,7 @@ Detailed validation evidence:
 
 ## Current Validation Baseline
 
-**317 automated tests passing**
+**360 automated tests passing**
 
 The release-validation process includes:
 
@@ -182,10 +182,10 @@ Latest validated release result:
 
 ```text
 Stage 1 - Release Readiness Smoke Validation
-8 passed
+10 passed
 
 Stage 2 - Complete Regression Validation
-317 passed
+360 passed
 
 RELEASE RESULT: PASS
 Smoke exit code      : 0
@@ -820,7 +820,7 @@ python -m pytest -q
 Current validated baseline:
 
 ```text
-317 passed
+360 passed
 ```
 
 The test suite covers:
@@ -903,7 +903,7 @@ Critical cross-layer checks validate:
 Latest validated result:
 
 ```text
-8 passed
+10 passed
 Smoke exit code: 0
 ```
 
@@ -914,7 +914,7 @@ If the smoke gate passes, the complete automated regression suite is executed.
 Latest validated result:
 
 ```text
-317 passed
+360 passed
 Regression exit code: 0
 ```
 

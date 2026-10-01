@@ -19,6 +19,7 @@ Write-Host "Version      : $(python --version)"
 $reportDirectory = ".\reports\release"
 $smokeReport = Join-Path $reportDirectory "release-smoke-junit.xml"
 $regressionReport = Join-Path $reportDirectory "release-regression-junit.xml"
+$summaryUpdater = ".\scripts\update_validation_summary.py"
 
 New-Item `
     -ItemType Directory `
@@ -61,6 +62,33 @@ python -m pytest `
     --junitxml="$regressionReport"
 
 $regressionExitCode = $LASTEXITCODE
+
+if ($regressionExitCode -eq 0) {
+    Write-Host ""
+    Write-Host "------------------------------------------------------------"
+    Write-Host " UPDATE README VALIDATION SUMMARY"
+    Write-Host "------------------------------------------------------------"
+    Write-Host ""
+
+    python $summaryUpdater `
+        --smoke-report "$smokeReport" `
+        --regression-report "$regressionReport" `
+        --readme ".\README.md"
+
+    $summaryExitCode = $LASTEXITCODE
+
+    if ($summaryExitCode -ne 0) {
+        Write-Host ""
+        Write-Host "============================================================"
+        Write-Host " RELEASE RESULT: BLOCKED"
+        Write-Host " Failed stage : README validation summary update"
+        Write-Host " Exit code    : $summaryExitCode"
+        Write-Host "============================================================"
+        Write-Host ""
+
+        exit $summaryExitCode
+    }
+}
 
 Write-Host ""
 Write-Host "============================================================"
