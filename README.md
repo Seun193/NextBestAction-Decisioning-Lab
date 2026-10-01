@@ -166,6 +166,33 @@ Detailed validation evidence:
 
 ---
 
+## Decision Audit and Traceability
+
+The lab includes persistent audit evidence for successfully returned Next Best Action decisions.
+
+Each successful NBA request receives a unique `X-Decision-ID` that reconciles the API response to a SQLite `decision_audits` record.
+
+Audit evidence preserves:
+
+- customer identity and decision timestamp
+- selected action, score, eligibility, and reason codes
+- complete ranked candidate evidence
+- customer input snapshot
+- membership-context snapshot when applicable
+- decision-engine, API, model, and audit-schema versions
+
+Repeated decisions are append-only and receive different decision identifiers.
+
+Audit persistence is transactional. If persistence fails, the API fails closed with HTTP 500 and does not return an `X-Decision-ID`.
+
+Automated validation covers API-to-audit reconciliation, data-quality defects, transaction rollback, and failure handling.
+
+Detailed validation evidence:
+
+- [Decision Audit and Traceability Validation](docs/validation/Decision_Audit_Traceability_Validation.md)
+
+---
+
 ## Current Validation Baseline
 
 **360 automated tests passing**
