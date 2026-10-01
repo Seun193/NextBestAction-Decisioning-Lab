@@ -1,4 +1,6 @@
-from fastapi.testclient import TestClient
+from fastapi.testclient import (
+    TestClient,
+)
 
 import src.app as app_module
 
@@ -57,13 +59,43 @@ def test_health():
         == "ok"
     )
 
+    assert (
+        response.json()["version"]
+        == app_module.APP_VERSION
+    )
 
-def test_unknown_customer_returns_404():
+
+def test_unknown_customer_returns_404(
+    monkeypatch,
+):
+    audit_calls = []
+
+    monkeypatch.setattr(
+        app_module,
+        "get_customer",
+        lambda customer_id: None,
+    )
+
+    monkeypatch.setattr(
+        app_module,
+        "persist_api_decision",
+        lambda *args: audit_calls.append(
+            args
+        ),
+    )
+
     response = client.get(
         "/nba/C99999"
     )
 
     assert response.status_code == 404
+
+    assert audit_calls == []
+
+    assert (
+        "x-decision-id"
+        not in response.headers
+    )
 
 
 def test_non_member_uses_base_nba_decision(
@@ -81,6 +113,13 @@ def test_non_member_uses_base_nba_decision(
         app_module,
         "get_membership_context",
         lambda customer_id: None,
+    )
+
+    monkeypatch.setattr(
+        app_module,
+        "persist_api_decision",
+        lambda customer, membership, decision:
+            "DEC-NON-MEMBER-001",
     )
 
     response = client.get(
@@ -103,11 +142,21 @@ def test_non_member_uses_base_nba_decision(
 
     assert body["score"] == 0.88
 
+    assert (
+        response.headers[
+            "x-decision-id"
+        ]
+        == "DEC-NON-MEMBER-001"
+    )
+
+    assert "decision_id" not in body
+
 
 def test_active_member_uses_membership_aware_ranking(
     monkeypatch,
 ):
     customer = make_customer()
+
     membership = make_membership()
 
     monkeypatch.setattr(
@@ -120,6 +169,13 @@ def test_active_member_uses_membership_aware_ranking(
         app_module,
         "get_membership_context",
         lambda customer_id: membership,
+    )
+
+    monkeypatch.setattr(
+        app_module,
+        "persist_api_decision",
+        lambda customer, membership, decision:
+            "DEC-MEMBER-001",
     )
 
     response = client.get(
@@ -145,4 +201,91 @@ def test_active_member_uses_membership_aware_ranking(
     assert (
         "MEMBERSHIP_RECENT_CAMPAIGN_CONVERSION"
         in body["reason_codes"]
+    )
+
+    assert (
+        response.headers[
+            "x-decision-id"
+        ]
+        == "DEC-MEMBER-001"
+    )
+
+    assert "decision_id" not in body
+
+
+def test_malformed_customer_id_creates_no_audit(
+    monkeypatch,
+):
+    audit_calls = []
+
+    monkeypatch.setattr(
+        app_module,
+        "persist_api_decision",
+        lambda *args: audit_calls.append(
+            args
+        ),
+    )
+
+    response = client.get(
+        "/nba/not-a-customer"
+    )
+
+    assert response.status_code == 422
+
+    assert audit_calls == []
+
+    assert (
+        "x-decision-id"
+        not in response.headers
+    )
+
+
+def test_audit_persistence_failure_is_fail_closed(
+    monkeypatch,
+):
+    customer = make_customer()
+
+    monkeypatch.setattr(
+        app_module,
+        "get_customer",
+        lambda customer_id: customer,
+    )
+
+    monkeypatch.setattr(
+        app_module,
+        "get_membership_context",
+        lambda customer_id: None,
+    )
+
+    def fail_audit(
+        customer,
+        membership,
+        decision,
+    ):
+        raise RuntimeError(
+            "Synthetic audit failure"
+        )
+
+    monkeypatch.setattr(
+        app_module,
+        "persist_api_decision",
+        fail_audit,
+    )
+
+    response = client.get(
+        "/nba/C00001"
+    )
+
+    assert response.status_code == 500
+
+    assert response.json() == {
+        "detail": (
+            "Decision audit "
+            "persistence failed"
+        )
+    }
+
+    assert (
+        "x-decision-id"
+        not in response.headers
     )

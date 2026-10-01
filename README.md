@@ -166,9 +166,36 @@ Detailed validation evidence:
 
 ---
 
+## Decision Audit and Traceability
+
+The lab includes persistent audit evidence for successfully returned Next Best Action decisions.
+
+Each successful NBA request receives a unique `X-Decision-ID` that reconciles the API response to a SQLite `decision_audits` record.
+
+Audit evidence preserves:
+
+- customer identity and decision timestamp
+- selected action, score, eligibility, and reason codes
+- complete ranked candidate evidence
+- customer input snapshot
+- membership-context snapshot when applicable
+- decision-engine, API, model, and audit-schema versions
+
+Repeated decisions are append-only and receive different decision identifiers.
+
+Audit persistence is transactional. If persistence fails, the API fails closed with HTTP 500 and does not return an `X-Decision-ID`.
+
+Automated validation covers API-to-audit reconciliation, data-quality defects, transaction rollback, and failure handling.
+
+Detailed validation evidence:
+
+- [Decision Audit and Traceability Validation](docs/validation/Decision_Audit_Traceability_Validation.md)
+
+---
+
 ## Current Validation Baseline
 
-**317 automated tests passing**
+**360 automated tests passing**
 
 The release-validation process includes:
 
@@ -182,10 +209,10 @@ Latest validated release result:
 
 ```text
 Stage 1 - Release Readiness Smoke Validation
-8 passed
+10 passed
 
 Stage 2 - Complete Regression Validation
-317 passed
+360 passed
 
 RELEASE RESULT: PASS
 Smoke exit code      : 0
@@ -820,7 +847,7 @@ python -m pytest -q
 Current validated baseline:
 
 ```text
-317 passed
+360 passed
 ```
 
 The test suite covers:
@@ -903,7 +930,7 @@ Critical cross-layer checks validate:
 Latest validated result:
 
 ```text
-8 passed
+10 passed
 Smoke exit code: 0
 ```
 
@@ -914,7 +941,7 @@ If the smoke gate passes, the complete automated regression suite is executed.
 Latest validated result:
 
 ```text
-317 passed
+360 passed
 Regression exit code: 0
 ```
 
